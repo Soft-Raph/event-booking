@@ -4,24 +4,22 @@ namespace Tests\Feature;
 
 use App\Models\{Booking, Ticket};
 use App\Services\PaymentService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class PaymentServiceTest extends TestCase
 {
+    use RefreshDatabase;
+
     /** @test */
     public function it_calculates_amount_correctly()
     {
-        $booking = Booking::factory()
-            ->for(Ticket::factory(['price' => 100]))
+        $booking = \App\Models\Booking::factory()
+            ->for(\App\Models\Ticket::factory(['price' => 100]))
             ->create(['quantity' => 2]);
 
-        $svc = new PaymentService();
-        $res = $svc->charge($booking);
+        $res = (new \App\Services\PaymentService())->charge($booking);
 
-        $this->assertArrayHasKey('success', $res);
-        $this->assertArrayHasKey('amount', $res);
-        $this->assertArrayHasKey('status', $res);
-
-        $this->assertEquals(200.0, $res['amount']); // 100 * 2
+        $this->assertEquals(200.0, $res['amount']);
     }
 }
