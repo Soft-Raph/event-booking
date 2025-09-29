@@ -2,22 +2,36 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use App\Models\{User, Event, Ticket, Booking};
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Admin & organizer
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name'=>'Admin One','email'=>'admin1@example.com',
+            'password'=>Hash::make('password'),'role'=>'admin'
         ]);
+        User::factory()->create([
+            'name'=>'Organizer One','email'=>'org1@example.com',
+            'password'=>Hash::make('password'),'role'=>'organizer'
+        ]);
+
+        // Customers
+        User::factory(8)->create(['role'=>'customer']);
+
+        // Events + Tickets
+        $organizer = User::where('role','organizer')->first();
+        $events = Event::factory(5)->create(['created_by'=>$organizer->id]);
+
+        foreach ($events as $event) {
+            Ticket::factory(3)->create(['event_id'=>$event->id]);
+        }
+
+        // Bookings
+        Booking::factory(20)->create();
     }
 }
