@@ -16,13 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api();
         $middleware->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
+             'role' => \App\Http\Middleware\EnsureRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->renderable(function (AuthenticationException $e, $request) {
-            if ($request->expectsJson() || $request->is('api/*')) {
-                return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
-            }
-        });
     })
     ->create();
