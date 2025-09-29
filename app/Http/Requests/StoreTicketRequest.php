@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateEventRequest extends FormRequest
+class StoreTicketRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +24,9 @@ class UpdateEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|required|string|max:120',
-            'description' => 'sometimes|required|string',
-            'date' => 'sometimes|required|date',
-            'location' => 'sometimes|required|string|max:160',
+            'type' => 'required|string|max:80',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:1',
         ];
     }
 
