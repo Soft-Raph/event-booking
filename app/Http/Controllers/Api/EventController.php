@@ -16,6 +16,7 @@ class EventController extends Controller
         $key = 'events:'.md5($request->fullUrl());
         $events = Cache::remember($key, now()->addMinutes(5), function() use ($request){
             return Event::query()
+                ->withCount('tickets')
                 ->searchByTitle($request->query('q'))
                 ->when($request->date_from || $request->date_to,
                     fn($q)=>$q->filterByDate($request->date_from, $request->date_to))
@@ -28,7 +29,7 @@ class EventController extends Controller
 
     public function show($id)
     {
-        $event = Event::with('creator')->findOrFail($id);
+        $event = Event::with('tickets','creator')->findOrFail($id);
         return $this->ok($event);
     }
 
