@@ -2,14 +2,14 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase; // 👈
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
-    use RefreshDatabase; // 👈
-
-    /** @test */
+    use RefreshDatabase;
+    #[Test]
     public function it_registers_and_logs_in()
     {
         $payload = [

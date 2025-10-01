@@ -2,16 +2,16 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase; // 👈
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class EventTest extends TestCase
 {
-    use RefreshDatabase; // 👈
-
-    /** @test */
+    use RefreshDatabase;
+    #[Test]
     public function it_lists_events_with_pagination()
     {
         $user = User::factory()->create(['role' => 'customer']);

@@ -5,14 +5,20 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\Ticket;
+use App\Notifications\BookingConfirmedNotification;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Laravel\Sanctum\Sanctum;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class BookingTest extends TestCase
+class BookingPaymentTest extends TestCase
 {
-    /** @test */
+    use RefreshDatabase;
+    #[Test]
     public function it_books_a_ticket_and_pays()
     {
+        Notification::fake();
         $customer = User::factory()->create(['role' => 'customer']);
         Sanctum::actingAs($customer);
 
@@ -34,5 +40,10 @@ class BookingTest extends TestCase
         $this->postJson("/api/bookings/{$bookingId}/payment")
             ->assertOk()
             ->assertJsonPath('success', true);
+
+        Notification::assertSentTo(
+            [$customer],
+            BookingConfirmedNotification::class
+        );
     }
 }

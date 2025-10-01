@@ -5,13 +5,13 @@ namespace Tests\Feature;
 use App\Models\{Booking, Ticket};
 use App\Services\PaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class PaymentServiceTest extends TestCase
 {
     use RefreshDatabase;
-
-    /** @test */
+    #[Test]
     public function it_calculates_amount_correctly()
     {
         $booking = \App\Models\Booking::factory()

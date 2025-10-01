@@ -22,20 +22,28 @@ class BookingController extends Controller
 
     public function store(StoreBookingRequest $req, $ticketId)
     {
-        return DB::transaction(function() use ($req, $ticketId){
-            $ticket = Ticket::lockForUpdate()->findOrFail($ticketId);
-            if($ticket->quantity < $req->quantity){
-                return response()->json(['success'=>false,'message'=>'Not enough tickets'], 422);
-            }
-            $booking = Booking::create([
-                'user_id'=>$req->user()->id,
-                'ticket_id'=>$ticket->id,
-                'quantity'=>$req->quantity,
-                'status'=>'pending',
-            ]);
-            $ticket->decrement('quantity', $req->quantity);
-            return $this->ok($booking, 'Booking created');
-        });
+        try {
+            return DB::transaction(function () use ($req, $ticketId) {
+                $ticket = Ticket::lockForUpdate()->findOrFail($ticketId);
+                if ($ticket->quantity < $req->quantity) {
+                    return response()->json(['success' => false, 'message' => 'Not enough tickets'], 422);
+                }
+                $booking = Booking::create([
+                    'user_id' => $req->user()->id,
+                    'ticket_id' => $ticket->id,
+                    'quantity' => $req->quantity,
+                    'status' => 'pending',
+                ]);
+                $ticket->decrement('quantity', $req->quantity);
+                return $this->ok($booking, 'Booking created');
+            });
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ticket not found',
+            ], 404);
+        }
     }
 
     public function cancel(Request $request, $id)
